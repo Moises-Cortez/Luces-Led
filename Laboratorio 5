@@ -1,0 +1,35 @@
+import processing.serial.*;
+
+Serial arduinoPort;
+int[] ledPins = {0, 1, 2, 3, 4}; // Pines a los que están conectados los LEDs
+int numLeds = ledPins.length;
+int delayTime = 500; // Milisegundos de retraso
+
+void setup() {
+  size(200, 200);
+  // Abre el puerto serial al que está conectado el Arduino
+  arduinoPort = new Serial(this, Serial.list()[0], 9600);
+  // Espera a que el puerto serial se abra
+  delay(2000);
+}
+
+void draw() {
+  // Enciende los LEDs en orden ascendente
+  for (int i = 0; i < numLeds; i++) {
+    sendDigitalWrite(ledPins[i], 1); // Enciende
+    delay(delayTime);
+    sendDigitalWrite(ledPins[i], 0); // Apaga
+  }
+  
+  // Enciende los LEDs en orden descendente
+  for (int i = numLeds - 1; i >= 0; i--) {
+    sendDigitalWrite(ledPins[i], 1); // Enciende
+    delay(delayTime);
+    sendDigitalWrite(ledPins[i], 0); // Apaga
+  }
+}
+
+// Función para enviar datos al Arduino
+void sendDigitalWrite(int pin, int value) {
+  arduinoPort.write(pin + ":" + value + "\n");
+}
